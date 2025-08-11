@@ -39,7 +39,7 @@ export const useAuthStore = create((set, get) => ({
       toast.success("Account created successfully");
       get().connectSocket();
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response.data.message || "Signup Failed");
     } finally {
       set({ isSigningUp: false });
     }
@@ -54,7 +54,7 @@ export const useAuthStore = create((set, get) => ({
 
       get().connectSocket();
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response.data.message || "Login Failed");
     } finally {
       set({ isLoggingIn: false });
     }
@@ -67,7 +67,7 @@ export const useAuthStore = create((set, get) => ({
       toast.success("Logged out successfully");
       get().disconnectSocket();
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response.data.message || "Logout Failed");
     }
   },
 
@@ -79,7 +79,7 @@ export const useAuthStore = create((set, get) => ({
       toast.success("Profile updated successfully");
     } catch (error) {
       console.log("error in update profile:", error);
-      toast.error(error.response.data.message);
+      toast.error(error.response.data.message || "Updated Failed");
     } finally {
       set({ isUpdatingProfile: false });
     }
@@ -93,10 +93,10 @@ export const useAuthStore = create((set, get) => ({
       query: {
         userId: authUser._id,
       },
+      transports: ["websocket"],
     });
-    socket.connect();
 
-    set({ socket: socket });
+    set({ socket });
 
     socket.on("getOnlineUsers", (userIds) => {
       set({ onlineUsers: userIds });
